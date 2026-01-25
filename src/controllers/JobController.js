@@ -17,7 +17,6 @@ module.exports = {
       // 1. Retornar a lista de vagas
       const listResponse = await MeuPadrinhoService.getLatestJobs();
 
-      // Access the 'vagas' property from the object
       if (!listResponse || !listResponse.vagas || listResponse.vagas.length === 0) {
         return res.status(404).json({ error: 'No jobs found' });
       }
