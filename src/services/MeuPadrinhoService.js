@@ -5,8 +5,8 @@ const api = axios.create({
 });
 
 module.exports = {
-  async getLatestJobs() {
-    const { data } = await api.get('/vagas?page=0');
+  async getLatestJobs(level) {
+    const { data } = await api.get(`vagas?niveis=${level}&page=0`);
     return data;
   },
 

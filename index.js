@@ -9,5 +9,6 @@ app.use(routes);
 const PORT = 80;
 
 app.listen(PORT, () => {
-  console.log(`Servidor iniciado na porta http://localhost:${PORT}/latest`);
+  console.log(`Servidor iniciado na porta ${PORT}`);
+  console.log(`Rotas disponíveis: /estagio, /pleno, /senior`);
 });
