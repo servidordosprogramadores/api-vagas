@@ -10,5 +10,5 @@ const PORT = 80;
 
 app.listen(PORT, () => {
   console.log(`Servidor iniciado na porta ${PORT}`);
-  console.log(`Rotas disponíveis: /estagio, /pleno, /senior`);
+  console.log(`Rotas disponíveis: /estagio, /junior, /pleno, /senior`);
 });

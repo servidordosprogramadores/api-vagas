@@ -75,6 +75,9 @@ module.exports = {
   getEstagio(req, res) {
     return getLatestByLevel(req, res, 'estagio');
   },
+  getJunior(req, res) {
+    return getLatestByLevel(req, res, 'junior');
+  },
   getPleno(req, res) {
     return getLatestByLevel(req, res, 'pleno');
   },
