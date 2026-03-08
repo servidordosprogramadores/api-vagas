@@ -25,33 +25,40 @@ async function getLatestByLevel(req, res, level) {
       return res.status(404).json({ error: `No jobs found for level: ${level}` });
     }
 
-    // 2. Filtrar a lista para garantir que o nível retornado corresponde ao endpoint
+    // 2. Filtrar vagas garantindo que o nível corresponde ao endpoint
     const normalize = (str) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
     const targetLevel = normalize(level);
 
-    const latestJobSummary = listResponse.vagas.find(vaga => {
-      // Se a vaga não tiver campo nivel na listagem, assumimos que é válida (confiando no filtro da API externa)
-      if (!vaga.nivel) return true;
+    let details = null;
+    let technologiesData = null;
 
-      const vagaNivel = normalize(vaga.nivel);
-      // Verifica correspondência direta (ex: "pleno" match "desenvolvedor pleno") ou termo "intern" para estagio
-      return vagaNivel.includes(targetLevel) ||
-        (targetLevel === 'estagio' && vagaNivel.includes('intern'));
-    });
+    for (const vaga of listResponse.vagas) {
+      // Validar nível na listagem
+      if (!vaga.nivel || normalize(vaga.nivel) !== targetLevel) {
+        continue;
+      }
 
-    if (!latestJobSummary) {
-      return res.status(404).json({ error: `No specific match found for level: ${level} in the returned list.` });
+      // Buscar detalhes e validar nível também nos detalhes
+      const [jobDetails, jobTechnologies] = await Promise.all([
+        MeuPadrinhoService.getJobDetails(vaga.nano_id),
+        MeuPadrinhoService.getJobTechnologies(vaga.nano_id)
+      ]);
+
+      const detailLevel = jobDetails.nivel || jobDetails.nivel_vaga || '';
+      if (normalize(detailLevel) !== targetLevel) {
+        continue;
+      }
+
+      details = jobDetails;
+      technologiesData = jobTechnologies;
+      break;
     }
 
-    const nanoId = latestJobSummary.nano_id;
+    if (!details) {
+      return res.status(404).json({ error: `No job found with matching level: ${level}` });
+    }
 
-    // 3. Buscar detalhes e tecnologias da vaga mais recente
-    const [details, technologiesData] = await Promise.all([
-      MeuPadrinhoService.getJobDetails(nanoId),
-      MeuPadrinhoService.getJobTechnologies(nanoId)
-    ]);
-
-    // 4. Combinar e retornar a resposta
+    // 3. Combinar e retornar a resposta
     const response = {
       titulo_vaga: details.titulo_vaga,
       local: details.local,
