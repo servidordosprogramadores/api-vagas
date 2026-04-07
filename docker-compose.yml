@@ -1,0 +1,11 @@
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "81:80"
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
