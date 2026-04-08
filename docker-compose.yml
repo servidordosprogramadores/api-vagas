@@ -3,7 +3,7 @@ services:
     build: .
     restart: unless-stopped
     ports:
-      - "81:80"
+      - "2400:8080"
     deploy:
       resources:
         limits:
